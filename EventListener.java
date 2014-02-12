@@ -1,4 +1,4 @@
-package carintelligence;
+package de.thomasaull.event;
 
 import java.lang.reflect.Method;
 
