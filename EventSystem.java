@@ -10,6 +10,7 @@ public class EventSystem
 {
 	static ArrayList<EventListener> eventListeners = new ArrayList();
 	static ArrayList<EventListener> eventListenersTrashbin = new ArrayList();
+	static ArrayList<EventListener> eventListenersToBeAdded = new ArrayList();
 	private static Boolean dispatchInProgress = false;
 	
 	public EventSystem()
@@ -48,7 +49,11 @@ public class EventSystem
 		if(method != null) 
 		{
 			eventListener = new EventListener(_type, _containingClass, method, _eventClass);
-			eventListeners.add(eventListener);
+			
+			if(dispatchInProgress)
+				eventListenersToBeAdded.add(eventListener);
+			else
+				eventListeners.add(eventListener);
 		}
 		else
 			System.out.println("error adding event to the listenerList");
@@ -68,8 +73,10 @@ public class EventSystem
 				{
 					eventListenersTrashbin.add(eventListener);
 				}
-				else
+				else 
+				{
 					eventListeners.remove(eventListener);
+				}
 			}
 		}
 	}
@@ -77,6 +84,9 @@ public class EventSystem
 	
 	public static void emptyTrashbin()
 	{
+		if(eventListenersTrashbin.size() == 0)
+			return;
+		
 //		System.out.println("trashbin emptying: " + eventListenersTrashbin.size() + " | " + eventListeners.size());
 		eventListeners.removeAll(eventListenersTrashbin);
 		eventListenersTrashbin.clear();
@@ -92,6 +102,8 @@ public class EventSystem
 	
 	public static void dispatchEvent(String _type, Event _event)
 	{	
+		System.out.println("dispatch" + _type);
+		
 		dispatchInProgress = true;
 		
 		//System.out.println("ÐÐÐÐÐÐÐÐÐÐÐÐÐÐÐÐÐ");
@@ -141,6 +153,7 @@ public class EventSystem
 		
 		dispatchInProgress = false;
 		emptyTrashbin();
+		//addEventListenersDelayed();
 	}
 	
 }
